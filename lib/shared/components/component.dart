@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_app/shared/cuibt/cubit.dart';
 import 'package:to_do_app/shared/styles/colors.dart';
@@ -191,20 +194,22 @@ void navigateTo(context, widget) => Navigator.push(
 void navigateAndFinish(context, widget) => Navigator.pushAndRemoveUntil(
     context, MaterialPageRoute(builder: (context) => widget), (route) => false);
 
-Widget defaultButton({String? text, void Function()? onPressed}) =>
-    MaterialButton(
-      onPressed: onPressed,
-      color: defaultColor,
-      textColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0))),
-      height: 60.0,
-      minWidth: double.infinity,
-      child: Center(
-          child: Text(
-        '$text',
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      )),
+Widget defaultButton({String? text, void Function()? onPressed}) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20.0),
+      child: MaterialButton(
+        onPressed: onPressed,
+        color: defaultColor,
+        textColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0))),
+        height: 60.0,
+        minWidth: double.infinity,
+        child: Center(
+            child: Text(
+          '$text',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        )),
+      ),
     );
 
 Widget taskItem({
@@ -252,6 +257,82 @@ Widget taskItem({
             )),
           ),
         ],
+      ),
+    );
+
+Widget pageItem({
+  required List taskList,
+  required BuildContext context,
+}) =>
+    ConditionalBuilder(
+      condition: taskList.isNotEmpty,
+      builder: (context) => ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          Color? colorList() {
+            if ((taskList[index]['color'] == 'ColorList.orange')) {
+              return Colors.orange;
+            } else if (taskList[index]['color'] == 'ColorList.red') {
+              return Colors.red;
+            } else if (taskList[index]['color'] == 'ColorList.brown') {
+              return Colors.brown;
+            } else if (taskList[index]['color'] == 'ColorList.blue') {
+              return Colors.blue;
+            }
+            return Colors.black;
+          }
+
+          return taskItem(
+            onChanged: (bool? value) {
+              showToast(
+                  text: (value == true)
+                      ? 'Added to Completed tasks'
+                      : 'Added to Uncompleted tasks',
+                  state: ToastStates.success);
+
+              AppCubit.get(context).updateData(
+                isCompleted: (value == true) ? 'true' : 'false',
+                id: taskList[index]['id'],
+                isfav: taskList[index]['isFav'].toString(),
+              );
+            },
+            checkboxColor: colorList(),
+            isCheked: (taskList[index]['isCompleted'] == 'true') ? true : false,
+            title: taskList[index]['title'],
+            dotTap: () {
+              saveAlert(context: context, model: taskList[index]);
+              log(taskList[index]['date']);
+            },
+          );
+        },
+        separatorBuilder: (context, index) => const SizedBox(
+          height: 5.0,
+        ),
+        itemCount: taskList.length,
+      ),
+      fallback: (context) => Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 70.0,
+              ),
+              SizedBox(height: 200.0, width: 200.0, child: emptySvg),
+              const SizedBox(
+                height: 20.0,
+              ),
+              const Text(
+                'No tasks to show',
+                style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey),
+              )
+            ],
+          ),
+        ),
       ),
     );
 
@@ -326,7 +407,11 @@ Widget defaultDivider() => const Divider(
     );
 
 Widget scheduleTaskItem(
-        {Color? color, String? time, String? title, bool? isCompleted}) =>
+        {Color? color,
+        String? time,
+        String? title,
+        bool? isCompleted,
+        required void Function() iconTap}) =>
     Container(
       height: 80.0,
       width: double.infinity,
@@ -358,13 +443,34 @@ Widget scheduleTaskItem(
               ],
             ),
             const Spacer(),
-            Icon(
-              (isCompleted == true)
-                  ? Icons.check_circle_outline
-                  : Icons.radio_button_unchecked,
-              color: Colors.white,
+            InkWell(
+              onTap: iconTap,
+              child: Icon(
+                (isCompleted == true)
+                    ? Icons.check_circle_outline
+                    : Icons.radio_button_unchecked,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
       ),
     );
+
+    // Color? colorList({required List allTasks,required int index}) {
+    //                             if (allTasks[index]['color'] ==
+    //                                 'ColorList.orange') {
+    //                               return Colors.orange;
+    //                             } else if (allTasks[index]['color'] ==
+    //                                 'ColorList.red') {
+    //                               return Colors.red;
+    //                             } else if (allTasks[index]['color'] ==
+    //                                 'ColorList.brown') {
+    //                               return Colors.brown;
+    //                             } else if (allTasks[index]['color'] ==
+    //                                 'ColorList.blue') {
+    //                               return Colors.blue;
+    //                             }
+    //                             return Colors.black;
+    //                           }
+

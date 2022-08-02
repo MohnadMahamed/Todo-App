@@ -4,10 +4,13 @@ import 'package:to_do_app/layout/board_screen.dart';
 import 'package:to_do_app/shared/cuibt/cubit.dart';
 import 'package:to_do_app/shared/cuibt/states.dart';
 import 'package:to_do_app/shared/network/notificationservice.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationService().initNotification();
+  tz.initializeTimeZones();
+
   runApp(const MyApp());
 }
 
