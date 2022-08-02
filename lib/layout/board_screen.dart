@@ -35,86 +35,55 @@ class BoardScreen extends StatelessWidget {
         body: Column(
           children: [
             defaultDivider(),
-            const Expanded(
+            Expanded(
               child: DefaultTabController(
                   length: 4,
                   child: Scaffold(
-                    appBar: TabBar(
+                    appBar: const TabBar(
                       isScrollable: true,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Colors.black,
                       unselectedLabelStyle: TextStyle(
-                        textBaseline: TextBaseline.ideographic,
                         color: Colors.black45,
-                        fontSize: 12.0,
+                        fontSize: 13.0,
                         fontWeight: FontWeight.bold,
                       ),
                       labelColor: Colors.black,
                       indicatorWeight: 3.0,
                       labelStyle: TextStyle(
-                        fontSize: 13.0,
+                        fontSize: 15.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       tabs: [
                         Tab(
-                          height: 50.0,
-                          child: Text(
-                            'All',
-                          ),
+                          text: 'All',
                         ),
                         Tab(
-                          height: 50.0,
-                          child: Text(
-                            'Completed',
-                          ),
+                          text: 'Completed',
                         ),
                         Tab(
-                          height: 50.0,
-                          child: Text(
-                            'Uncompleted',
-                          ),
+                          text: 'Uncompleted',
                         ),
                         Tab(
-                          height: 50.0,
-                          child: Text(
-                            'Favorite',
-                          ),
+                          text: 'Favorite',
                         ),
                       ],
                     ),
-                    body: TabBarView(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                          ),
-                          child: AllTaskScreen(),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                          ),
-                          child: CompletedScreen(),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                          ),
-                          child: UnCompletedScreen(),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                          ),
-                          child: FavoriteScreen(),
-                        ),
-                      ],
+                    body: Container(
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              top: BorderSide(
+                                  color: Colors.black12, width: 2.0))),
+                      child: const TabBarView(
+                        children: [
+                          AllTaskScreen(),
+                          CompletedScreen(),
+                          UnCompletedScreen(),
+                          FavoriteScreen(),
+                        ],
+                      ),
                     ),
                   )),
             )
