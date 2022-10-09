@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_app/layout/board_screen.dart';
+import 'package:to_do_app/modules/splach_screen.dart';
 import 'package:to_do_app/shared/cuibt/cubit.dart';
 import 'package:to_do_app/shared/cuibt/states.dart';
 import 'package:to_do_app/shared/network/notificationservice.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
                 scaffoldBackgroundColor: Colors.white,
                 primarySwatch: Colors.blue,
               ),
-              home: const BoardScreen(),
+              home: const SplashScreen(),
             );
           },
         ));

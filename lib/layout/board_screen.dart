@@ -42,6 +42,7 @@ class BoardScreen extends StatelessWidget {
                     appBar: const TabBar(
                       isScrollable: true,
                       unselectedLabelColor: Colors.grey,
+                      indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: Colors.black,
                       unselectedLabelStyle: TextStyle(
                         color: Colors.black45,
