@@ -7,9 +7,10 @@ import 'package:to_do_app/shared/styles/colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-void saveAlert({context, model}) {
+void deleteAlert({context, model}) {
   final AlertDialog alart = AlertDialog(
     scrollable: true,
+    title: const Text('You wanaa delete?'),
     content: Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(300.0)),
       child: Row(
@@ -32,13 +33,16 @@ void saveAlert({context, model}) {
                         SizedBox(
                           height: 4.0,
                         ),
-                        Icon(Icons.delete),
+                        Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
                         SizedBox(
                           height: 2.0,
                         ),
                         Text('Delete',
                             style:
-                                TextStyle(color: Colors.black, fontSize: 15.0)),
+                                TextStyle(color: Colors.white, fontSize: 15.0)),
                         SizedBox(
                           height: 4.0,
                         ),
@@ -50,91 +54,41 @@ void saveAlert({context, model}) {
           const SizedBox(
             width: 10.0,
           ),
-          (model['isFav'] == 'false')
-              ? Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: defaultColor),
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                          AppCubit.get(context).updateData(
-                              id: model['id'],
-                              isfav: 'true',
-                              isCompleted: model['isCompleted']);
-                          showToast(
-                              text: 'Added to favorite tasks',
-                              state: ToastStates.warning);
-                        },
-                        child: Center(
-                          child: Column(
-                            children: const [
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              Icon(
-                                Icons.favorite,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                height: 2.0,
-                              ),
-                              Text('Favorite',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.0,
-                                  )),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                )
-              : Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: defaultColor),
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                          AppCubit.get(context).updateData(
-                              id: model['id'],
-                              isfav: 'false',
-                              isCompleted: model['isCompleted']);
-                          showToast(
-                              text: 'Remove from favorite tasks',
-                              state: ToastStates.success);
-                        },
-                        child: Center(
-                          child: Column(
-                            children: const [
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              Icon(
-                                Icons.favorite_border,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                height: 2.0,
-                              ),
-                              Text('Unfavorite',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.0,
-                                  )),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.blue),
+              child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Center(
+                    child: Column(
+                      children: const [
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 2.0,
+                        ),
+                        Text('Cancel',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0,
+                            )),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                      ],
+                    ),
+                  )),
+            ),
+          )
         ],
       ),
     ),
@@ -216,6 +170,9 @@ Widget taskItem({
   bool? isCheked,
   context,
   void Function()? dotTap,
+  void Function()? favTap,
+  IconData? favIcon,
+  Color? favIconColor,
   Color? checkboxColor,
   required void Function(bool?)? onChanged,
   Color Function(Set<MaterialState> states)? getColor,
@@ -238,23 +195,18 @@ Widget taskItem({
             onChanged: onChanged,
           ),
           const SizedBox(
-            width: 10.0,
+            width: 5.0,
           ),
           Text('$title'),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.only(right: 20.0, bottom: 20.0),
-            child: Center(
-                child: InkWell(
-              onTap: dotTap,
-              child: const Text(
-                '...',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
-              ),
-            )),
+            padding: const EdgeInsets.only(right: 10, bottom: 0),
+            child: IconButton(
+                onPressed: favTap,
+                icon: Icon(
+                  favIcon,
+                  color: favIconColor,
+                )),
           ),
         ],
       ),
@@ -283,54 +235,107 @@ Widget pageItem({
             return Colors.black;
           }
 
-          return taskItem(
-            onChanged: (bool? value) {
-              showToast(
-                  text: (value == true)
-                      ? 'Added to Completed tasks'
-                      : 'Added to Uncompleted tasks',
-                  state: ToastStates.success);
+          return Dismissible(
+              key: Key(taskList[index]['id'].toString()),
+              child: taskItem(
+                onChanged: (bool? value) {
+                  showToast(
+                      text: (value == true)
+                          ? 'Added to Completed tasks'
+                          : 'Added to Uncompleted tasks',
+                      state: ToastStates.success);
 
-              AppCubit.get(context).updateData(
-                isCompleted: (value == true) ? 'true' : 'false',
-                id: taskList[index]['id'],
-                isfav: taskList[index]['isFav'].toString(),
-              );
-            },
-            checkboxColor: colorList(),
-            isCheked: (taskList[index]['isCompleted'] == 'true') ? true : false,
-            title: taskList[index]['title'],
-            dotTap: () {
-              saveAlert(context: context, model: taskList[index]);
-              log(taskList[index]['date']);
-            },
-          );
+                  AppCubit.get(context).updateData(
+                    isCompleted: (value == true) ? 'true' : 'false',
+                    id: taskList[index]['id'],
+                    isfav: taskList[index]['isFav'].toString(),
+                  );
+                },
+                checkboxColor: colorList(),
+                isCheked:
+                    (taskList[index]['isCompleted'] == 'true') ? true : false,
+                title: taskList[index]['title'],
+                favTap: () {
+                  AppCubit.get(context).updateData(
+                      id: taskList[index]['id'],
+                      isfav: (taskList[index]['isFav']) == 'true'
+                          ? 'false'
+                          : 'true',
+                      isCompleted: taskList[index]['isCompleted']);
+                  showToast(text: 'Task Upadte', state: ToastStates.success);
+                },
+                favIcon: (taskList[index]['isFav']) == 'true'
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                favIconColor: colorList(),
+              ),
+              background: Container(
+                color: Colors.redAccent,
+                child: Row(children: const [
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.white, fontSize: 15.0),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.delete_rounded,
+                    size: 20.0,
+                    color: Colors.white,
+                  ),
+                  Spacer(),
+                  Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.white, fontSize: 15.0),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.delete_rounded,
+                    size: 20.0,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                ]),
+              ),
+              onDismissed: (direction) {
+                deleteAlert(context: context, model: taskList[index]);
+              });
         },
         separatorBuilder: (context, index) => const SizedBox(
-          height: 5.0,
+          height: 1.0,
         ),
         itemCount: taskList.length,
       ),
       fallback: (context) => Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 70.0,
-              ),
-              SizedBox(height: 200.0, width: 200.0, child: emptySvg),
-              const SizedBox(
-                height: 20.0,
-              ),
-              const Text(
-                'No tasks to show',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey),
-              )
-            ],
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 130.0,
+                ),
+                SizedBox(height: 150.0, width: 150.0, child: emptySvg),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                const Text(
+                  'No tasks to show',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey),
+                )
+              ],
+            ),
           ),
         ),
       ),

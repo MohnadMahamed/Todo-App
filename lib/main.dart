@@ -5,6 +5,7 @@ import 'package:to_do_app/shared/cuibt/cubit.dart';
 import 'package:to_do_app/shared/cuibt/states.dart';
 import 'package:to_do_app/shared/network/notificationservice.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:to_do_app/shared/styles/colors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 appBarTheme: const AppBarTheme(color: Colors.white),
                 scaffoldBackgroundColor: Colors.white,
-                primarySwatch: Colors.blue,
+                primarySwatch: Colors.green,
               ),
               home: const SplashScreen(),
             );

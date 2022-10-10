@@ -48,7 +48,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               initialSelectedDate: DateTime.now(),
               selectionColor: defaultColor,
               width: 55.0,
-              height: 75.0,
+              height: 80.0,
               dateTextStyle: const TextStyle(fontSize: 20.0),
               selectedTextColor: Colors.white,
               onDateChange: (date) {

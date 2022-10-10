@@ -93,7 +93,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime.now(),
-                          lastDate: DateTime.parse('2022-12-01'),
+                          lastDate: DateTime.parse('2025-12-01'),
                         ).then((DateTime? value) {
                           dateController.text =
                               // DateFormat.yMMMd().format(value!);
